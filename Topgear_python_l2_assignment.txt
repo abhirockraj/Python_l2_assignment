@@ -1,0 +1,280 @@
+Assignment 6
+
+
+from googleapiclient.discovery import build
+api= ''### Kindly please enter the personal api key as it was private api key ###
+youtube = build('youtube', 'v3', developerKey= api)
+channel_name='ChilledCow'
+try:
+    req_1= youtube.channels().list(part= ['id'], forUsername= channel_name).execute()
+    req_2= youtube.channels().list(part= ['statistics'], forUsername= channel_name).execute()
+    req_3= youtube.channels().list(part= ['snippet'], forUsername= channel_name).execute()
+except:
+    print("channel not found")
+for key, value in req_1.items():
+    print(key, " ", value)
+
+for key, value in req_2.items():
+    print(key, " ", value)
+
+
+for key, value in req_3.items():
+    print(key, " ", value)
+
+
+
+Assignment 2
+
+"""Creating the menu driven console"""
+import sqlite3
+conn= sqlite3.connect('DVD.db')
+c= conn.cursor()
+c.execute("""create table if not exists Movie(Title TEXT primary key, star TEXT , YOR int, genre TEXT)""")
+conn.commit()
+print("Enter 1 for DVD adding\n 2 for searching option \n 3 for modifying record \n 4 Deleating a record \n 5 for exit ")
+try:
+    i=int(input())
+    if(i not in [1,2,3,4,5]):
+        print("Run the program again as wrong input")
+    else:
+        if(i == 1):
+            print("Enter the Title")
+            t= input()
+            print("Enter the Star name")
+            s= input()
+            print("Enter the date in int format")
+            date= int(input())
+            print("Enter the gener of the movie")
+            g = input()
+            """Add query here"""
+            c.execute("INSERT INTO Movie VALUES(?,?,?,?)",(t,s,date,g))
+            conn.commit()
+        elif(i == 3):
+            print("Enter the title of DVD which needs to be modified")
+            t1 = input()
+            print("Enter the new Title")
+            t= input()
+            print("Enter the new Star name")
+            s= input()
+            print("Enter the new year in int format")
+            date= int(input())  
+            print("Enter the new gener of the movie")
+            g = input()
+            """Update query here"""
+            c.execute("UPDATE Movie SET title= ?, star= ?,yor = ?, genre= ? where title= ?",(t,s,date,g,t1))
+            conn.commit()
+            
+        elif(i == 4):
+            print("Enter movie title")
+            t= input()
+            """Delete query here"""
+            c.execute("Delete from Movie where title = '{}'".format(t))
+            conn.commit()
+        elif(i == 2):
+            print("Enter the gener for searching the movie")
+            g= input()
+            """Select query here"""
+            c.execute("SELECT * from Movie WHERE genre = '{}' ".format(g))
+            print(c.fetchone())
+            conn.commit()
+           
+            
+        else:
+            print("Thank u for using the database you are now out of the program")
+                  
+except:
+    print("enter correct credeniatials")
+    
+c.close()
+conn.close
+
+Assignment 3
+
+
+"""Creating the menu driven console"""
+import sqlite3
+conn= sqlite3.connect('Employee.db')
+c= conn.cursor()
+c.execute("""create table if not exists emp(emp_id Text primary key, name TEXT , dept_name TEXT, b_sal int, designation Text, DOB Text, e_type Text)""")
+conn.commit()
+print("Enter\n 1 for Add record \n 2 for Search record \n 3 for Delete record \n 4 Modify record \n 5 for Report Generation \n 6 for Exit")
+try:
+    i=int(input())
+    if(i not in [1,2,3,4,5,6]):
+        print("Run the program again as wrong input entered")
+    else:
+        
+        
+        if(i == 1):
+            print("Enter the Empid")
+            e= input()
+            print("Enter the name of employee")
+            n= input()
+            print("Enter the Department Name")
+            dn= input()
+            print("Enter the Basic salary of the employee")
+            bs = int(input())
+            print("Enter the Designation of the employee")
+            ds = input()
+            print("Enter date of birth of employee")
+            dob = input()
+            print("Enter employee type permanet or on Contract")
+            t= input()
+            """Add query here"""
+            c.execute("INSERT INTO emp VALUES(?,?,?,?,?,?)",(e,n,dn,bs,ds,dob,t))
+            conn.commit()
+            
+            
+        elif(i == 2):
+            print("Enter the empid for searching about the employee")
+            e= input()
+            """Select query here"""
+            c.execute("SELECT * from emp WHERE emp_id = '{}' ".format(e))
+            print(c.fetchone())
+            conn.commit() 
+            
+            
+        elif(i == 3):
+            print("Enter empid for deleting the record")
+            e= input()
+            """Delete query here"""
+            c.execute("Delete from emp where emp_id = '{}'".format(e))
+            conn.commit() 
+            
+            
+        elif(i == 4):
+            print("Enter the Empid")
+            e= input()
+            print("Enter the name of employee")
+            n= input()
+            print("Enter the Department Name")
+            dn= input()
+            print("Enter the Basic salary of the employee")
+            bs = int(input())
+            print("Enter the Designation of the employee")
+            ds = input()
+            print("Enter date of birth of employee")
+            dob = input()
+            print("Enter employee type permanet or on Contract")
+            t= input()
+            """Update query here"""
+            c.execute("UPDATE emp SET emp_id= ?, name= ?,dept_name = ?, b_sal= ?, designation= ?, DOB= ? , e_type= ? where emp_id= ?",(e,n,dn,bs,ds,dob,t,e))
+            conn.commit()
+        
+        elif (i == 5):
+            print("Enter 1 for List of all employees \n 2 for  employee for respective department \n 3 for Total salary of each employee \n 4 for List of type of employee")
+            try:
+                ch= int(input())
+                if(ch == 1):
+                    c.execute("Select * from emp")
+                    print(c.fetchall())
+                    conn.commit()
+                elif(ch == 2):
+                    print("Enter department name to print details")
+                    dn = input()
+                    c.execute("SELECT * from emp WHERE  dept_name= '{}' ".format(dn))
+                    print(c.fetchall())
+                    conn.commit() 
+                elif(ch == 3):
+                    c.execute("SELECT emp_id, (b_sal+(b_sal*.10)+(b_sal*.15)-(b_sal*.12)-(b_sal*.10)) as Total_sal from emp")
+                    print(c.fetchall())
+                    conn.commit()
+                elif(ch == 4):
+                    c.execute("Select * from emp  ")
+                    print(c.fetchall())
+                    conn.commit()
+            except:
+                print("Enter correct choice")
+        
+        else:
+            print("Thank u for using the database you are now out of the program")
+                  
+except:
+    print("enter correct credeniatials !!!")
+    
+c.close()
+conn.close
+
+Assignment 4
+
+
+def add(a, b):
+    return(a+b)
+def div(a,b):
+    if(b==0):
+        return("Can't divided by 0")
+    else:
+        return(a/b)    
+def mult(a,b):
+    return(a*b)
+
+import math
+def sqrt(a):
+    return(math.sqrt(a))
+
+def sub(a,b):
+    return(a-b)
+
+Assignment 5
+
+import sqlite3
+conn= sqlite3.connect('DVD.db')
+c= conn.cursor()
+c.execute("""create table if not exists Movie(Title TEXT primary key, star TEXT , YOR int, genre TEXT)""")
+conn.commit()
+print("Enter 1 for DVD adding\n 2 for searching option \n 3 for modifying record \n 4 Deleating a record \n 5 for exit ")
+try:
+    i=int(input())
+    if(i not in [1,2,3,4,5]):
+        print("Run the program again as wrong input")
+    else:
+        if(i == 1):
+            print("Enter the Title")
+            t= input()
+            print("Enter the Star name")
+            s= input()
+            print("Enter the date in int format")
+            date= int(input())
+            print("Enter the gener of the movie")
+            g = input()
+            """Add query here"""
+            c.execute("INSERT INTO Movie VALUES(?,?,?,?)",(t,s,date,g))
+            conn.commit()
+        elif(i == 3):
+            print("Enter the title of DVD which needs to be modified")
+            t1 = input()
+            print("Enter the new Title")
+            t= input()
+            print("Enter the new Star name")
+            s= input()
+            print("Enter the new year in int format")
+            date= int(input())  
+            print("Enter the new gener of the movie")
+            g = input()
+            """Update query here"""
+            c.execute("UPDATE Movie SET title= ?, star= ?,yor = ?, genre= ? where title= ?",(t,s,date,g,t1))
+            conn.commit()
+            
+        elif(i == 4):
+            print("Enter movie title")
+            t= input()
+            """Delete query here"""
+            c.execute("Delete from Movie where title = '{}'".format(t))
+            conn.commit()
+        elif(i == 2):
+            print("Enter the gener for searching the movie")
+            g= input()
+            """Select query here"""
+            c.execute("SELECT * from Movie WHERE genre = '{}' ".format(g))
+            print(c.fetchone())
+            conn.commit()
+           
+            
+        else:
+            print("Thank u for using the database you are now out of the program")
+                  
+except:
+    print("enter correct credeniatials")
+    
+c.close()
+conn.close
